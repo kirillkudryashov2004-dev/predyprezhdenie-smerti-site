@@ -3,6 +3,7 @@ const root = document.documentElement;
 const hero = document.querySelector(".hero");
 const topbar = document.querySelector(".topbar");
 const navLinks = Array.from(document.querySelectorAll('.nav a[href^="#"]'));
+const endgameSection = document.querySelector(".endgame-section");
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const loadingStatus = document.querySelector("[data-loading-status]");
 const loadingProgress = document.querySelector("[data-loading-progress]");
@@ -165,6 +166,14 @@ const updateScrollState = () => {
     const hash = link.getAttribute("href");
     link.classList.toggle("is-active", activeId !== "" && hash === `#${activeId}`);
   });
+
+  if (endgameSection) {
+    const rect = endgameSection.getBoundingClientRect();
+    const inEndZone =
+      rect.top < window.innerHeight * 0.78 && rect.bottom > window.innerHeight * 0.22;
+
+    body.classList.toggle("is-at-end", inEndZone);
+  }
 };
 
 let scrollTicking = false;
