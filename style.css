@@ -9,6 +9,7 @@
   --accent-soft: rgba(217, 77, 77, 0.18);
   --shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
   --scroll-progress: 0%;
+  --intro-progress: 0%;
 }
 
 * {
@@ -716,6 +717,118 @@ body.lightbox-open {
   border-radius: 999px;
 }
 
+.page-intro__panel {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  width: min(92vw, 420px);
+  padding: 2rem 1.4rem 1.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 32px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0)),
+    rgba(8, 10, 14, 0.68);
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+  backdrop-filter: blur(18px);
+}
+
+.page-intro__icon-shell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: clamp(110px, 18vw, 138px);
+  aspect-ratio: 1;
+}
+
+.page-intro__icon {
+  position: relative;
+  z-index: 2;
+  width: 78%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 26px;
+  box-shadow:
+    0 0 34px rgba(217, 77, 77, 0.25),
+    0 14px 34px rgba(0, 0, 0, 0.34);
+  animation:
+    iconFloat 2.8s ease-in-out infinite,
+    iconFlicker 4.6s linear infinite;
+}
+
+.page-intro__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.page-intro__ring-outer {
+  box-shadow: 0 0 24px rgba(217, 77, 77, 0.22);
+  animation: introRotate 7s linear infinite;
+}
+
+.page-intro__ring-inner {
+  inset: 11px;
+  border-color: rgba(255, 215, 215, 0.14);
+  animation: introRotateReverse 5.6s linear infinite;
+}
+
+.page-intro__label,
+.page-intro__status,
+.page-intro__percent {
+  margin: 0;
+}
+
+.page-intro__label {
+  color: rgba(241, 161, 161, 0.95);
+  font-size: 0.78rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+}
+
+.page-intro__status {
+  min-height: 1.6em;
+  color: rgba(243, 239, 231, 0.92);
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  text-align: center;
+  text-wrap: balance;
+}
+
+.page-intro__bar {
+  width: 100%;
+  height: 10px;
+  padding: 2px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+}
+
+.page-intro__bar-fill {
+  display: block;
+  width: var(--intro-progress);
+  height: 100%;
+  border-radius: inherit;
+  background:
+    linear-gradient(90deg, rgba(255, 214, 214, 0.82), rgba(217, 77, 77, 0.98) 48%, rgba(255, 243, 238, 0.9));
+  box-shadow:
+    0 0 18px rgba(217, 77, 77, 0.38),
+    0 0 28px rgba(217, 77, 77, 0.18);
+  transition: width 180ms ease;
+}
+
+.page-intro__percent {
+  color: rgba(243, 239, 231, 0.72);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.82rem;
+}
+
 .page-intro__iris {
   width: min(34vw, 420px);
   aspect-ratio: 1;
@@ -1038,6 +1151,58 @@ body.is-loading .page-shell {
   }
 }
 
+@keyframes introRotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes introRotateReverse {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes iconFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -7px, 0);
+  }
+}
+
+@keyframes iconFlicker {
+  0%,
+  38%,
+  40%,
+  100% {
+    filter: brightness(1);
+  }
+
+  39% {
+    filter: brightness(1.2);
+  }
+
+  72% {
+    filter: brightness(0.9);
+  }
+
+  74% {
+    filter: brightness(1.1);
+  }
+}
+
 @keyframes backdropDrift {
   0% {
     transform: translate3d(-2%, -1%, 0) scale(1);
@@ -1193,6 +1358,10 @@ body.is-loading .page-shell {
 
   .hero-content {
     padding-top: 4rem;
+  }
+
+  .page-intro__panel {
+    padding: 1.5rem 1rem 1.25rem;
   }
 
   .hero h1 {
