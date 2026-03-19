@@ -4,8 +4,53 @@ const hero = document.querySelector(".hero");
 const topbar = document.querySelector(".topbar");
 const navLinks = Array.from(document.querySelectorAll('.nav a[href^="#"]'));
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const loadingStatus = document.querySelector("[data-loading-status]");
+const loadingProgress = document.querySelector("[data-loading-progress]");
 
 body.classList.add("is-loading");
+
+const introStartedAt = performance.now();
+const INTRO_MIN_MS = prefersReducedMotion.matches ? 220 : 1450;
+const INTRO_FINISH_DELAY_MS = prefersReducedMotion.matches ? 80 : 340;
+const loadingMessages = [
+  "Подготовка материалов...",
+  "Проявление образов...",
+  "Сборка тревожных фрагментов...",
+  "Открытие архива...",
+];
+
+let introValue = 0;
+let introSettled = false;
+
+const renderIntroProgress = () => {
+  const roundedValue = Math.max(0, Math.min(100, Math.round(introValue)));
+
+  root.style.setProperty("--intro-progress", `${roundedValue}%`);
+
+  if (loadingProgress) {
+    loadingProgress.textContent = `${roundedValue}%`;
+  }
+
+  if (loadingStatus) {
+    const messageIndex = Math.min(
+      loadingMessages.length - 1,
+      Math.floor((roundedValue / 100) * loadingMessages.length)
+    );
+
+    loadingStatus.textContent = loadingMessages[messageIndex];
+  }
+};
+
+renderIntroProgress();
+
+const loadingTicker = window.setInterval(() => {
+  if (introSettled) {
+    return;
+  }
+
+  introValue = Math.min(93, introValue + 4 + Math.random() * 11);
+  renderIntroProgress();
+}, 90);
 
 const heroRevealElements = Array.from(
   document.querySelectorAll(".hero .eyebrow, .hero h1, .hero-copy, .hero-stage, .hero-actions, .hero-facts li")
@@ -247,11 +292,30 @@ document.addEventListener("keydown", (event) => {
 });
 
 const showPage = () => {
+  if (introSettled) {
+    return;
+  }
+
+  introSettled = true;
+
+  const elapsed = performance.now() - introStartedAt;
+  const waitTime = Math.max(0, INTRO_MIN_MS - elapsed);
+
   window.setTimeout(() => {
-    body.classList.remove("is-loading");
-    body.classList.add("is-ready");
-    requestScrollState();
-  }, 140);
+    window.clearInterval(loadingTicker);
+    introValue = 100;
+    renderIntroProgress();
+
+    if (loadingStatus) {
+      loadingStatus.textContent = "Вход открыт";
+    }
+
+    window.setTimeout(() => {
+      body.classList.remove("is-loading");
+      body.classList.add("is-ready");
+      requestScrollState();
+    }, INTRO_FINISH_DELAY_MS);
+  }, waitTime);
 };
 
 if (document.readyState === "complete") {
