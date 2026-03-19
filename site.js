@@ -6,17 +6,24 @@ const navLinks = Array.from(document.querySelectorAll('.nav a[href^="#"]'));
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const loadingStatus = document.querySelector("[data-loading-status]");
 const loadingProgress = document.querySelector("[data-loading-progress]");
+const loadingWarning = document.querySelector("[data-loading-warning]");
 
 body.classList.add("is-loading");
 
 const introStartedAt = performance.now();
-const INTRO_MIN_MS = prefersReducedMotion.matches ? 220 : 1450;
-const INTRO_FINISH_DELAY_MS = prefersReducedMotion.matches ? 80 : 340;
+const INTRO_MIN_MS = prefersReducedMotion.matches ? 260 : 1850;
+const INTRO_FINISH_DELAY_MS = prefersReducedMotion.matches ? 90 : 420;
 const loadingMessages = [
-  "Подготовка материалов...",
-  "Проявление образов...",
+  "Сканирование сигнала...",
+  "Декодирование предупреждения...",
   "Сборка тревожных фрагментов...",
-  "Открытие архива...",
+  "Открытие узла памяти...",
+];
+const loadingWarnings = [
+  "Сигнал нестабилен",
+  "Источник не подтвержден",
+  "Обнаружены следы помех",
+  "Не отворачивайтесь",
 ];
 
 let introValue = 0;
@@ -39,6 +46,15 @@ const renderIntroProgress = () => {
 
     loadingStatus.textContent = loadingMessages[messageIndex];
   }
+
+  if (loadingWarning) {
+    const warningIndex = Math.min(
+      loadingWarnings.length - 1,
+      Math.floor((roundedValue / 100) * loadingWarnings.length)
+    );
+
+    loadingWarning.textContent = loadingWarnings[warningIndex];
+  }
 };
 
 renderIntroProgress();
@@ -48,9 +64,9 @@ const loadingTicker = window.setInterval(() => {
     return;
   }
 
-  introValue = Math.min(93, introValue + 4 + Math.random() * 11);
+  introValue = Math.min(94, introValue + 2.5 + Math.random() * 9.5);
   renderIntroProgress();
-}, 90);
+}, 95);
 
 const heroRevealElements = Array.from(
   document.querySelectorAll(".hero .eyebrow, .hero h1, .hero-copy, .hero-stage, .hero-actions, .hero-facts li")
@@ -307,7 +323,11 @@ const showPage = () => {
     renderIntroProgress();
 
     if (loadingStatus) {
-      loadingStatus.textContent = "Вход открыт";
+      loadingStatus.textContent = "Доступ разрешен";
+    }
+
+    if (loadingWarning) {
+      loadingWarning.textContent = "Вход в архив открыт";
     }
 
     window.setTimeout(() => {
